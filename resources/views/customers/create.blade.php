@@ -21,6 +21,12 @@
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group">
+                            <label for="customer_id">Customer ID:<b class="text-danger">*</b></label>
+                            <input type="text" class="form-control" name="customer_id"s id="customer_id" placeholder="CUS-0001"> 
+                        </div>    
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
                             <label for="name">Name:<b class="text-danger">*</b></label>
                             <input type="text" class="form-control" name="name" placeholder="Jane Doe">
                         </div>    
@@ -31,7 +37,7 @@
                             <input type="email" class="form-control" name="email" placeholder="Jane@example.com">
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-8">
                         <div class="form-group">
                             <label for="description">Description:<b class="text-danger">*</b></label>
                             <input type="text" class="form-control" name="description" id="description">

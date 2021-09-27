@@ -2,7 +2,7 @@
 @section('content')
 <div class="container">
     <div class="row d-flex justify-content-center">
-        <div class="col-md-6">
+        <div class="col-md-10">
 
             @if ($errors->any())
                 @foreach ($errors->all() as $error)
@@ -22,9 +22,9 @@
                     <input type="hidden" id="secret">
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-5">
+                            <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="mode">Mode:<b class="text-danger">*</b></label>
+                                    <label for="mode">Subscription Mode:<b class="text-danger">*</b></label>
                                     <select class="form-control" id="mode" name="mode">
                                         <option selected disabled>Choose an option</option>
                                         <option value="online">Online</option>
@@ -32,7 +32,7 @@
                                     </select>
                                 </div>    
                             </div>
-                            <div class="col-md-7">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="customer">Choose a customer:<b class="text-danger">*</b></label>
                                     <select class="form-control" id="customer" name="customer">
@@ -58,10 +58,20 @@
                                     </select>
                                 </div>    
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="custom_price_option">Custom price:<b class="text-danger">*</b></label>
+                                    <select class="form-control custom_price_option" name="custom_price_option" id="custom_price_option">
+                                        <option selected disabled>Choose?</option>    
+                                        <option value="yes">Yes</option>
+                                        <option value="no">No</option>
+                                    </select>
+                                </div>    
+                            </div>
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="price">Price:</label>
-                                    <input type="number" class="form-control" name="price" id="price">
+                                    <input type="number" class="form-control" name="price" id="price" placeholder="0.00" disabled>
                                 </div>    
                             </div>
                             <div class="col-md-6">
@@ -230,6 +240,15 @@
                     }
                 }
             });
+        });
+        $('.custom_price_option').on('change', function() {
+            if($(this).val() == "yes") {
+                $('#price').removeAttr('disabled');
+                alert('Custom price will be use now.');
+                return false;
+            }
+            $('#price').attr('disabled', true);
+            alert('Actual price will be use now.');
         });
     });
 </script>

@@ -50,6 +50,7 @@ class CustomerController extends Controller
     public function store(Request $request)
     {   
         $request->validate([
+            'customer_id' => 'required',
             'name' => 'required',
             'email' => 'required',
             'description' => 'required',
@@ -100,6 +101,7 @@ class CustomerController extends Controller
         }
         
         $customer = new Customer();
+        $customer->customer_prefix_id = request()->customer_id;
         $customer->customer_stripe_id = $resp->id;
         $customer->name = request()->name;
         $customer->email = request()->email;

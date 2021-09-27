@@ -18,7 +18,8 @@
                         <thead>
                             <tr>
                                 <th scope="col">#</th>
-                                <th scope="col">Customer ID</th>
+                                <th scope="col">ID</th>
+                                <th scope="col">Stripe ID</th>
                                 <th scope="col">Name</th>
                                 <th scope="col">Email</th>
                                 <th scope="col">Country</th>
@@ -36,6 +37,9 @@
                                         <th scope="row">
                                             {{ $count++ }}
                                         </th>
+                                        <td>
+                                            {{ isset($customer->customer_prefix_id) && !empty($customer->customer_prefix_id) ? $customer->customer_prefix_id : '---' }}
+                                        </td>
                                         <td>
                                             {{ isset($customer->customer_stripe_id) && !empty($customer->customer_stripe_id) ? $customer->customer_stripe_id : '---' }}
                                         </td>
