@@ -21,6 +21,29 @@
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group">
+                            <label for="organization">Organization:<b class="text-danger">*</b></label>
+                            <select class="form-control" name="organization" id="organization">
+                                @if($organizations->count() > 0)
+                                    <option selected disabled>Choose an option</option>
+                                    @foreach($organizations as $organization)
+                                        <option value="{{ $organization->id }}">{{ $organization->name }}</option>
+                                    @endforeach
+                                @else
+                                    <option selected disabled>No organization found.</option>
+                                @endif
+                            </select>
+                        </div>    
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="bank">Bank:<b class="text-danger">*</b></label>
+                            <select class="form-control" name="bank" id="bank">
+                                <option selected disabled>Choose organization first.</option>
+                            </select>
+                        </div>    
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
                             <label for="customer_id">Customer ID:<b class="text-danger">*</b></label>
                             <input type="text" class="form-control" name="customer_id"s id="customer_id" placeholder="CUS-0001"> 
                         </div>    
@@ -192,3 +215,33 @@
     </div>
 </div>
 @endsection
+@push('scripts')
+    <script type="text/javascript">
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $(document).ready(function () {
+            $('#organization').on('change',function(e) {
+                $.ajax({
+                    url:"{{ route('get-organization-banks') }}",
+                    type:"POST",
+                    data: {
+                        organization_id: e.target.value
+                    },
+                    success:function (data) {
+                        $('#bank').empty();
+                        if(data.banks.length > 0) {
+                            $.each(data.banks,function(index,bank){
+                                $('#bank').append('<option value="'+bank.id+'">'+bank.name+'</option>');
+                            })
+                        } else {
+                            $('#bank').append('<option selected disabled>No bank found.</option>');
+                        }
+                    }
+                })
+            });
+        });
+    </script>
+@endpush

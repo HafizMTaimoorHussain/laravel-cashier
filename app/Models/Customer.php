@@ -11,4 +11,6 @@ use Laravel\Cashier\Billable;
 class Customer extends Model
 {
     use HasFactory, Billable;
+
+    protected $guarded = [];
 }

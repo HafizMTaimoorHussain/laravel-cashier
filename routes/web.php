@@ -23,6 +23,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('customer/listing', [App\Http\Controllers\Admin\CustomerController::class, 'index'])->name('customer.index');
     Route::get('create/customer', [App\Http\Controllers\Admin\CustomerController::class, 'create'])->name('create.customer');
     Route::post('store/customer', [App\Http\Controllers\Admin\CustomerController::class, 'store'])->name('store.customer');
+    Route::post('customer/get-organization-banks', [App\Http\Controllers\Admin\CustomerController::class, 'organization_banks'])->name('get-organization-banks');
 
     // *** Routes for Subscription *** //
     Route::any('subscription/listing', [App\Http\Controllers\Admin\SubscriptionController::class, 'index'])->name('subscription.index');

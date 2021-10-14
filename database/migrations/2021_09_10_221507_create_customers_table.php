@@ -34,6 +34,8 @@ class CreateCustomersTable extends Migration
             $table->string('shopping_currency')->nullable();
             $table->string('shopping_tax_status')->nullable();
             $table->string('shopping_tax_id')->nullable();
+            $table->unsignedInteger('organization_id')->nullable();
+            $table->unsignedInteger('bank_id')->nullable();
             $table->timestamps();
         });
     }

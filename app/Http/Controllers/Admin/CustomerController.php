@@ -4,11 +4,15 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Customer;
+
+use App\Models\Bank;
 use App\Models\Country;
 use App\Models\Currency;
+use App\Models\Customer;
 use App\Models\Language;
+use App\Models\Organization;
 use App\Models\Timezone;
+
 
 class CustomerController extends Controller
 {
@@ -40,11 +44,12 @@ class CustomerController extends Controller
 
     public function create()
     {
-        return view('customers.create')
-            ->withCountries(Country::get())
-            ->withCurrencies(Currency::get())
-            ->withTimezones(Timezone::get())
-            ->withLanguages(Language::get());
+        $this->data['countries'] = Country::get();
+        $this->data['currencies'] = Currency::get();
+        $this->data['languages'] = Language::get();
+        $this->data['timezones'] = Timezone::get();
+        $this->data['organizations'] = Organization::orderBy('created_at', 'DESC')->get(); 
+        return view('customers.create', $this->data);
     }
 
     public function store(Request $request)
@@ -118,5 +123,13 @@ class CustomerController extends Controller
         $customer->shopping_tax_status = request()->taxExempt;
         $customer->save();
         return redirect()->route('customer.index')->with('success', 'Customer has been created successfully');
+    }
+
+    public function organization_banks(Request $request)
+    {
+        $banks = Bank::where('organization_id',$request->organization_id)->get();
+        return response()->json([
+            'banks' => $banks
+        ]);
     }
 }
