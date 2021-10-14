@@ -37,46 +37,86 @@ class ProductController extends Controller
 
         $data = $request->except('_token');
 
-        $data['slug'] = strtolower($data['name']);
-        $price = $data['price'] *100; 
+            $data['slug'] = strtolower($data['name']);
+            $price = $data['price'] * 100; 
 
-        //create stripe product
-        $stripeProduct = $this->stripe->products->create([
-            'name' => $data['name'],
-            'statement_descriptor' => request()->statementDescriptor ? request()->statementDescriptor : '',
-        ]);
-        
-        //Stripe Plan Creation
-        $Interval = '';
-        $IntervalCount = '';
-        if(request()->interval == "quarter") {
-            $Interval = "month";
-            $IntervalCount = 3;
-        } else if(request()->interval == "semiannual") {
-            $Interval = "month";
-            $IntervalCount = 6;
-        }
-        else {
-            $Interval = request()->interval;
-            $IntervalCount = 1;
-        }
+            //create stripe product
+            $newProduct = $this->stripe->products->create([
+                'name' => $data['name'],
+                'statement_descriptor' => request()->statementDescriptor ? request()->statementDescriptor : '',
+            ]);
+            
+            //Stripe Plan Creation
+            $Interval = '';
+            $IntervalCount = '';
+            if(request()->interval == "quarter") {
+                $Interval = "month";
+                $IntervalCount = 3;
+            } else if(request()->interval == "semiannual") {
+                $Interval = "month";
+                $IntervalCount = 6;
+            }
+            else {
+                $Interval = request()->interval;
+                $IntervalCount = 1;
+            }
 
-        $stripePlanCreation = $this->stripe->plans->create([
-            'amount' => $price,
-            'currency' => request()->currency,
-            'interval' => $Interval,
-            'interval_count' => $IntervalCount,
-            'product' => $stripeProduct->id,
-        ]);
+            $newprice = $this->stripe->prices->create([
+                'product' => $newProduct->id,
+                'unit_amount' => $price,
+                'currency' => request()->currency
+            ]);
+            // dd($newprice);
 
-        $data['stripe_plan'] = $stripePlanCreation->id;
-        $data['product_id'] = $stripeProduct->id;
+            $data['stripe_plan'] = $newprice->id;
+            $data['product_id'] = $newProduct->id;
+            Plan::create($data);
 
-        Plan::create($data);
+        // try {
+        //     $data = $request->except('_token');
 
-        return redirect()
-            ->route('plans.index')
-            ->with('success', 'Plan has been created successfully');
+        //     $data['slug'] = strtolower($data['name']);
+        //     $price = $data['price'] * 100; 
+
+        //     //create stripe product
+        //     $newProduct = $this->stripe->products->create([
+        //         'name' => $data['name'],
+        //         'statement_descriptor' => request()->statementDescriptor ? request()->statementDescriptor : '',
+        //     ]);
+            
+        //     //Stripe Plan Creation
+        //     $Interval = '';
+        //     $IntervalCount = '';
+        //     if(request()->interval == "quarter") {
+        //         $Interval = "month";
+        //         $IntervalCount = 3;
+        //     } else if(request()->interval == "semiannual") {
+        //         $Interval = "month";
+        //         $IntervalCount = 6;
+        //     }
+        //     else {
+        //         $Interval = request()->interval;
+        //         $IntervalCount = 1;
+        //     }
+
+        //     $newprice = $this->stripe->prices->create([
+        //         'product' => $newProduct->id,
+        //         'unit_amount' => $price,
+        //         'currency' => request()->currency
+        //     ]);
+        //     // dd($newprice);
+
+        //     $data['stripe_plan'] = $newprice->id;
+        //     $data['product_id'] = $newProduct->id;
+        //     Plan::create($data);
+        //     return redirect()
+        //         ->route('plans.index')
+        //         ->with('success', 'Plan has been created successfully');
+        // } catch(\Exception $exception) {
+        //     return redirect()
+        //         ->back()
+        //         ->with('error', $exception);
+        // }
     }
 
     /**

@@ -65,17 +65,44 @@ class SubscriptionController extends Controller
     {
       $request->validate([
         'mode' => 'required',
+        'organization' => 'required',
         'customer' => 'required',
         'service' => 'required',
         'custom_price_option' => 'required',
         'price' => 'sometimes|required',
         'currency' => 'required',
         'recurring' => 'required',
+        'sales_rep' => 'required',
+        'cfid' => 'required'
       ]);
 
       $plan = Plan::where('slug',request()->service)->get()->first();
       $customer = Customer::where('id',request()->customer)->get()->first();
+
+      $invoiceItemData = $this->stripe->invoiceItems->create([
+        'customer' => $customer->stripe_id,
+        'price' => $plan->stripe_plan,
+      ]);
       
+      // dd($invoiceItemData);
+
+      $invoiceData = $this->stripe->invoices->create([
+        'customer' => $customer->stripe_id,
+        'collection_method' => 'send_invoice',
+        'days_until_due' => 0,
+        // 'due_date' => now()->timestamp
+      ]);
+
+      $this->stripe->invoices->finalizeInvoice(
+        $invoiceData->id
+      );
+      
+      $invoiceData->sendInvoice();
+      // $invoice = $this->stripe->invoices->sendInvoice(
+        // $invoiceData->id
+      // );
+      dd($invoiceData);
+
       // \Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
       // $data = \Stripe\Price::create([
       //   'unit_amount' => 99900,
@@ -133,22 +160,23 @@ class SubscriptionController extends Controller
               $IntervalCount = 1;
           }
 
-          $customerCurrency = Subscription::where('customer_stripe_id', $customer->stripe_id)->orderBy('id','desc')->get()->first();
+          // $customerCurrency = Subscription::where('customer_stripe_id', $customer->stripe_id)->orderBy('id','desc')->get()->first();
 
-          $subscription = \Stripe\Subscription::create([
-            'customer' => $customer->stripe_id,
-            'items' => [[
-              'price_data' => [
-                'unit_amount' => $price,
-                'currency' => $customerCurrency->currency != null ? $customerCurrency->currency : request()->currency,
-                'product' => trim($plan->product_id),
-                'recurring' => [
-                  'interval' => $Interval,
-                  'interval_count' => $IntervalCount
-                ],
-              ],
-            ]],
-          ]);
+          // $subscription = \Stripe\Subscription::create([
+          //   'customer' => $customer->stripe_id,
+          //   'items' => [[
+          //     'price_data' => [
+          //       'unit_amount' => $price,
+          //       'currency' => $customerCurrency->currency != null ? $customerCurrency->currency : request()->currency,
+          //       'product' => trim($plan->product_id),
+          //       'recurring' => [
+          //         'interval' => $Interval,
+          //         'interval_count' => $IntervalCount
+          //       ],
+          //     ],
+          //   ]],
+          // ]);
+
         }
   
         $endDate = "";
@@ -177,6 +205,7 @@ class SubscriptionController extends Controller
         $newSubscription->stripe_subscription_id = request()->mode != "online" ? null : $subscription->id;
         $newSubscription->product_id = trim($plan->product_id);
         $newSubscription->product_name = $plan->name;
+        $newSubscription->organization = request()->organization;
         $newSubscription->stripe_price = request()->mode != "online" ? null : $subscription->plan->id;
         $newSubscription->stripe_status = request()->mode != "online" ? 'active' : $subscription->status;
         $newSubscription->price = $price / 100;
@@ -185,6 +214,8 @@ class SubscriptionController extends Controller
         $newSubscription->next_invoice_date = request()->mode != "online" ? $endDate->toFormattedDateString() : Carbon::createFromTimeStamp($subscription->current_period_end)->toFormattedDateString();
         $newSubscription->customer_stripe_id = $customer->stripe_id;
         $newSubscription->created_by = auth()->user()->id;
+        $newSubscription->sales_rep = request()->sales_rep;
+        $newSubscription->cfid = request()->cfid;
         $newSubscription->status = request()->mode != "online" ? 'Offline' : 'Online';
         $newSubscription->payment_status = request()->mode == "online" ? 1 : 0;
         $newSubscription->save();
@@ -215,9 +246,5 @@ class SubscriptionController extends Controller
         $paymentMethods = $customer->paymentMethods();
         $intent = $customer->createSetupIntent();
         return ['status' => true, 'intent' => $intent->client_secret];
-    }
-
-    public function search_subscription() {
-      dd(request()->all());
     }
 }

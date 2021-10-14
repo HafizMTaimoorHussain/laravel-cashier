@@ -30,5 +30,10 @@ Route::group(['middleware' => 'auth'], function() {
     Route::post('store/subscription', [App\Http\Controllers\Admin\SubscriptionController::class, 'store'])->name('subscription.store');
     Route::get('subscription/setCustomerIntent', [App\Http\Controllers\Admin\SubscriptionController::class, 'setCustomerIntent']);
     Route::post('update-payment-status/subscription', [App\Http\Controllers\Admin\SubscriptionController::class, 'update_payment_status'])->name('subscription.update-payment-status');
-    Route::post('subscription/search', [App\Http\Controllers\Admin\SubscriptionController::class, 'search_subscription'])->name('subscription.search_subscription');
+
+    // *** Routes for Organization *** //
+    Route::resource('organization', App\Http\Controllers\Admin\OrganizationController::class);
+
+    // *** Routes for Bank *** //
+    Route::resource('bank', App\Http\Controllers\Admin\BankController::class);
 });

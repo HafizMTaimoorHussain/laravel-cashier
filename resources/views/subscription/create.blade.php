@@ -34,6 +34,18 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
+                                    <label for="organization">Organization:<b class="text-danger">*</b></label>
+                                    <select class="form-control" name="organization" id="organization">
+                                        <option selected disabled>Choose an option</option>    
+                                        <option value="Blac">Blac</option>
+                                        <option value="Access control">Access control</option>
+                                        <option value="Headquarters Blac">Headquarters Blac</option>
+                                        <option value="Private security">Private security</option>
+                                    </select>
+                                </div>    
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
                                     <label for="customer">Choose a customer:<b class="text-danger">*</b></label>
                                     <select class="form-control" id="customer" name="customer">
                                         @if(count($customers) > 0)
@@ -97,6 +109,42 @@
                                         <option value="three_of_month">Every 3 months</option>
                                         <option value="semiannual">Every 6 months</option>
                                         <option value="year">Yearly</option>
+                                    </select>
+                                </div>    
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="sales_rep">Sales rep:<b class="text-danger">*</b></label>
+                                    <input type="text" class="form-control" name="sales_rep" id="sales_rep" placeholder="Enter sales rep. name">
+                                </div>    
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="cfid">Use Cfid:<b class="text-danger">*</b></label>
+                                    <select class="form-control" name="cfid" id="cfid">
+                                        <option selected disabled>Choose an option</option>
+                                        <option value="G01">Acquisition of merchandise</option>
+                                        <option value="D06">Voluntary contributions to the SAR.</option>
+                                        <option value="I07">Satellite communications</option>
+                                        <option value="I06">Telephone communications</option>
+                                        <option value="I01">buildings</option>
+                                        <option value="I05">Dies, dies, molds, dies and tooling</option>
+                                        <option value="D09">Deposits in savings accounts, premiums based on pension plans.</option>
+                                        <option value="G02">Returns, discounts or bonuses</option>
+                                        <option value="D04">Donations.</option>
+                                        <option value="I04">Computer equipment and accessories</option>
+                                        <option value="I03">Transport equipment</option>
+                                        <option value="D08">Mandatory school transportation expenses.</option>
+                                        <option value="G03">General expenses</option>
+                                        <option value="D03">Funeral expenses.</option>
+                                        <option value="D02">Medical expenses for disability or disability</option>
+                                        <option value="D01">Medical, dental and hospital fees.</option>
+                                        <option value="D05">Real interest actually paid for mortgage loans (house).</option>
+                                        <option value="I02">Furniture and office equipment for investments</option>
+                                        <option value="I08">Other machinery and equipment</option>
+                                        <option value="D10">Payments for educational services (tuition)</option>
+                                        <option value="P01" selected="selected">To define</option>
+                                        <option value="D07">Premiums for insurance of medical expenses.</option>
                                     </select>
                                 </div>    
                             </div>
