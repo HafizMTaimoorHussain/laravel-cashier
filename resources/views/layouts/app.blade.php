@@ -83,7 +83,7 @@
     <script>
         $(document).ready(function() {
             setTimeout(() => {
-                $('.alert-danger').fadeOut(1500);
+                // $('.alert-danger').fadeOut(10000);
                 $('.alert-success').fadeOut(1500);
             }, 3000);
         });

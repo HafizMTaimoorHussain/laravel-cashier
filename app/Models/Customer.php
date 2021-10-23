@@ -13,4 +13,12 @@ class Customer extends Model
     use HasFactory, Billable;
 
     protected $guarded = [];
+
+    public function organization() {
+        return $this->belongsTo(Organization::class, 'organization_id');
+    }
+
+    public function bank() {
+        return $this->belongsTo(Bank::class, 'bank_id');
+    }
 }

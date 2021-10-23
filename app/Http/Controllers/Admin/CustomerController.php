@@ -25,7 +25,7 @@ class CustomerController extends Controller
 
     public function index()
     {
-        return view('customers.index')->withCustomers(Customer::orderBy('created_at','desc')->paginate(10));
+        return view('customers.index')->withCustomers(Customer::with('organization', 'bank')->orderBy('created_at','desc')->paginate(10));
     }
 
     /**
@@ -55,6 +55,8 @@ class CustomerController extends Controller
     public function store(Request $request)
     {   
         $request->validate([
+            'organization' => 'required',
+            'bank' => 'required',
             'customer_id' => 'required',
             'name' => 'required',
             'email' => 'required',
@@ -102,27 +104,35 @@ class CustomerController extends Controller
                 }
             }
         } catch(\Exception $e) {
-            return redirect()->back()->withErrors($e->getMessage());        
+            return redirect()->back()->withErrors($e->getMessage());
         }
-        
-        $customer = new Customer();
-        $customer->customer_prefix_id = request()->customer_id;
-        $customer->customer_stripe_id = $resp->id;
-        $customer->name = request()->name;
-        $customer->email = request()->email;
-        $customer->description = request()->description;
-        $customer->phone_no = request()->phone_no;
-        $customer->address_line_1 = request()->address_line_1;
-        $customer->address_line_2 = request()->address_line_2;
-        $customer->postal_code = request()->postal_code;
-        $customer->city = request()->city;
-        $customer->billing_country = request()->country;
-        $customer->billing_email = request()->email;
-        $customer->shopping_email = request()->email;
-        $customer->shopping_country = request()->country;
-        $customer->shopping_tax_status = request()->taxExempt;
-        $customer->save();
-        return redirect()->route('customer.index')->with('success', 'Customer has been created successfully');
+
+        try {
+            $customer = new Customer();
+            $customer->customer_prefix_id = request()->customer_id;
+            $customer->customer_stripe_id = $resp->id;
+            $customer->name = request()->name;
+            $customer->email = request()->email;
+            $customer->description = request()->description;
+            $customer->phone_no = request()->phone_no;
+            $customer->address_line_1 = request()->address_line_1;
+            $customer->address_line_2 = request()->address_line_2;
+            $customer->postal_code = request()->postal_code;
+            $customer->city = request()->city;
+            $customer->billing_country = request()->country;
+            $customer->billing_email = request()->email;
+            $customer->shopping_email = request()->email;
+            $customer->shopping_country = request()->country;
+            $customer->shopping_tax_status = request()->taxExempt;
+            $customer->organization_id = request()->organization;
+            $customer->bank_id = request()->bank;
+            $customer->save();
+            
+            return redirect()->route('customer.index')->with('success', 'Customer has been created successfully');
+
+        } catch(\Exception $e) {
+            return redirect()->back()->withErrors($e->getMessage());
+        }
     }
 
     public function organization_banks(Request $request)

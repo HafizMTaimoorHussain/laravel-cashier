@@ -45,7 +45,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="customer_id">Customer ID:<b class="text-danger">*</b></label>
-                            <input type="text" class="form-control" name="customer_id"s id="customer_id" placeholder="CUS-0001"> 
+                            <input type="text" class="form-control" name="customer_id"s id="customer_id" placeholder="C-0001"> 
                         </div>    
                     </div>
                     <div class="col-md-4">
@@ -163,7 +163,7 @@
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="taxExempt">Tax status:</b></label>
+                            <label for="taxExempt">Tax status:<b class="text-danger">*</b></label>
                             <select class="form-control" id="taxExempt" name="taxExempt">
                                 <option selected disabled>Choose an option</option>
                                 <option value="none">Taxable</option>

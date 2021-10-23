@@ -14,4 +14,8 @@ class Bank extends Model
     public function organization() {
         return $this->belongsTo(Organization::class, 'organization_id');
     }
+
+    public function customer() {
+        return $this->hasOne(Customer::class);
+    }
 }

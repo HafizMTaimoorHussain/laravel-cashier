@@ -14,4 +14,8 @@ class Organization extends Model
     public function bank() {
         return $this->hasOne(Bank::class);
     }
+
+    public function customer() {
+        return $this->hasOne(Customer::class);
+    }
 }
