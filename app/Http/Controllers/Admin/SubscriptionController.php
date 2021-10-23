@@ -17,7 +17,7 @@ class SubscriptionController extends Controller
 
     public function __construct() 
     {
-        $this->stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
+      $this->stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
     }
 
     public function index(Request $request) 
@@ -77,10 +77,10 @@ class SubscriptionController extends Controller
         'cfid' => 'required'
       ]);
 
-      $plan = Plan::where('slug',request()->service)->get()->first();
-      $customer = Customer::where('id',request()->customer)->get()->first();
-
       try {
+        $plan = Plan::where('slug', request()->service)->get()->first();
+        $customer = Customer::where('id', request()->customer)->get()->first();
+
         $price = null;
         if(request()->custom_price_option == "yes") {
           $price = (request()->price * 100);
@@ -90,16 +90,18 @@ class SubscriptionController extends Controller
         if(request()->mode == "online") {
           \Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
           
-          // $paymentMethod = request()->paymentMethod;
+          $paymentMethod = request()->paymentMethod;
           // dd($paymentMethod);
-          $customer->defaultPaymentMethod();
+          // $customer->defaultPaymentMethod();
           // $customer->createOrGetStripeCustomer();
           // dd($customer);
 
-          // $this->stripe->paymentMethods->attach(
-          //   $paymentMethod,
-          //   ['customer' => $customer->customer_stripe_id]
-          // );
+          $customer_payment_method = $this->stripe->paymentMethods->attach(
+            $paymentMethod,
+            ['customer' => $customer->customer_stripe_id]
+          );
+
+          // dd($customer_payment_method);
           // $customer->updateDefaultPaymentMethod($paymentMethod);
 
           $Interval = '';
@@ -125,7 +127,9 @@ class SubscriptionController extends Controller
           }
            
           $subscription = \Stripe\Subscription::create([
-            'customer' => $customer->customer_stripe_id,
+            'customer' => $customer_payment_method->customer,
+            "default_payment_method" => $paymentMethod,
+            "trial_end" => null,
             'items' => [[
               'price_data' => [
                 'unit_amount' => $price,
@@ -137,9 +141,12 @@ class SubscriptionController extends Controller
                 ],
               ],
             ]],
+
           ]);
 
         }
+
+        // dd( $subscription);
   
         $endDate = "";
         $recurringValue = "";

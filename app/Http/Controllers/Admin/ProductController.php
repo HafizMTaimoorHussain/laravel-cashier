@@ -35,7 +35,8 @@ class ProductController extends Controller
             'interval' => 'required'
         ]);
 
-        $data = $request->except('_token');
+        try {
+            $data = $request->except('_token');
 
             $data['slug'] = strtolower($data['name']);
             $price = $data['price'] * 100; 
@@ -71,6 +72,12 @@ class ProductController extends Controller
             $data['stripe_plan'] = $newprice->id;
             $data['product_id'] = $newProduct->id;
             Plan::create($data);
+            return redirect()->route('plans.index')->with('success', 'Plan has been created successfully');
+        } catch(\Exception $e) {
+            return redirect()->back()->with('error', $exception);
+        }
+
+        
 
         // try {
         //     $data = $request->except('_token');
