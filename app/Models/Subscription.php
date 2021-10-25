@@ -20,4 +20,12 @@ class Subscription extends Model
     public function customer() {
         return $this->belongsTo(Customer::class, 'customer_stripe_id','customer_stripe_id');
     }
+
+    public function organization() {
+        return $this->belongsTo(Customer::class, 'organization_id', 'id');
+    }
+
+    public function account() {
+        return $this->belongsTo(Bank::class, 'account_id', 'id');
+    }
 }

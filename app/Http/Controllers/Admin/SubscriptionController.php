@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\Currency;
+use App\Models\Organization;
 use App\Models\Plan;
 use App\Models\Subscription;
 
@@ -19,10 +20,10 @@ class SubscriptionController extends Controller
     {
       $this->stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
     }
-
+    
     public function index(Request $request) 
     {
-        $subscriptions = Subscription::with('user','customer')->orderBy('created_at','desc');
+        $subscriptions = Subscription::with('user','customer', 'organization', 'account')->orderBy('created_at','desc');
 
         if (!empty($request->all())) {
             if ($request->has('customer_prefix_id') && !empty(request()->customer_prefix_id)) {
@@ -59,6 +60,7 @@ class SubscriptionController extends Controller
             ->withCustomers(Customer::orderBy('id','desc')->get())
             ->withProducts(Plan::orderBy('id','desc')->get())
             ->withCurrencies(Currency::get())
+            ->withOrganizations(Organization::get())
             ->withIntent($intent);
     }
 
@@ -67,6 +69,7 @@ class SubscriptionController extends Controller
       $request->validate([
         'mode' => 'required',
         'organization' => 'required',
+        'account' => 'required',
         'customer' => 'required',
         'service' => 'required',
         'custom_price_option' => 'required',
@@ -76,6 +79,7 @@ class SubscriptionController extends Controller
         'sales_rep' => 'required',
         'cfid' => 'required'
       ]);
+      // dd(request()->all());
 
       try {
         $plan = Plan::where('slug', request()->service)->get()->first();
@@ -106,7 +110,6 @@ class SubscriptionController extends Controller
 
           $Interval = '';
           $IntervalCount = '';
-          $useCurrency = '';
           if(request()->recurring == "quarter") {
               $Interval = "month";
               $IntervalCount = 3;
@@ -119,6 +122,7 @@ class SubscriptionController extends Controller
               $IntervalCount = 1;
           }
 
+          $useCurrency = '';
           $customerCurrency = Subscription::where('customer_stripe_id', $customer->customer_stripe_id)->orderBy('id','desc')->get()->first();
           if(isset($customerCurrency) && !empty($customerCurrency)) {
             $useCurrency = $customerCurrency->currency;
@@ -177,7 +181,7 @@ class SubscriptionController extends Controller
         $newSubscription->stripe_price = request()->mode != "online" ? null : $subscription->plan->id;
         $newSubscription->stripe_status = request()->mode != "online" ? 'active' : $subscription->status;
         $newSubscription->price = $price / 100;
-        $newSubscription->currency = $useCurrency;
+        $newSubscription->currency = request()->mode == "online" ? $useCurrency : request()->currency;
         $newSubscription->recurring = $recurringValue;
         $newSubscription->next_invoice_date = request()->mode != "online" ? $endDate->toFormattedDateString() : Carbon::createFromTimeStamp($subscription->current_period_end)->toFormattedDateString();
         $newSubscription->customer_stripe_id = $customer->customer_stripe_id;
@@ -187,6 +191,7 @@ class SubscriptionController extends Controller
         $newSubscription->status = request()->mode != "online" ? 'Offline' : 'Online';
         $newSubscription->payment_status = request()->mode == "online" ? 1 : 0;
         $newSubscription->organization_id = request()->organization;
+        $newSubscription->account_id = request()->account;
         $newSubscription->save();
 
         return redirect()->route('subscription.index')->with('success', 'Your subscription created successfully');
@@ -215,5 +220,13 @@ class SubscriptionController extends Controller
         $paymentMethods = $customer->paymentMethods();
         $intent = $customer->createSetupIntent();
         return ['status' => true, 'intent' => $intent->client_secret];
+    }
+
+    public function account_wise_listing(Request $request) 
+    {
+        $subscriptions = Subscription::with('organization', 'account')->groupBy('account_id')->orderBy('created_at','desc');
+        $subscriptions = $subscriptions->paginate(10);
+        // dd($subscriptions);
+        return view('subscription.account_wise_listing')->withSubscriptions($subscriptions);
     }
 }

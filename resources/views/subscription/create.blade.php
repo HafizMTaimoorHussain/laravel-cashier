@@ -36,13 +36,24 @@
                                 <div class="form-group">
                                     <label for="organization">Organization:<b class="text-danger">*</b></label>
                                     <select class="form-control" name="organization" id="organization">
-                                        <option selected disabled>Choose an option</option>    
-                                        <option value="Blac">Blac</option>
-                                        <option value="Access control">Access control</option>
-                                        <option value="Headquarters Blac">Headquarters Blac</option>
-                                        <option value="Private security">Private security</option>
+                                        @if($organizations->count() > 0)
+                                            <option selected disabled>Choose an option</option>
+                                            @foreach($organizations as $organization)
+                                                <option value="{{ $organization->id }}">{{ $organization->name }}</option>
+                                            @endforeach
+                                        @else
+                                            <option selected disabled>No organization found.</option>
+                                        @endif
                                     </select>
-                                </div>    
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="account">Account:<b class="text-danger">*</b></label>
+                                    <select class="form-control" name="account" id="account">
+                                        <option selected disabled>Choose organization first.</option>
+                                    </select>
+                                </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -297,6 +308,30 @@
             }
             $('#price').attr('disabled', true);
             alert('Actual price will be use now.');
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#organization').on('change',function(e) {
+            $.ajax({
+                url:"{{ route('get-organization-banks') }}",
+                type:"POST",
+                data: {
+                    organization_id: e.target.value,
+                    "_token": "{{ csrf_token() }}"
+                },
+                success:function (data) {
+                    $('#account').empty();
+                    if(data.banks.length > 0) {
+                        $.each(data.banks,function(index,bank){
+                            $('#account').append('<option value="'+bank.id+'">'+bank.name+'</option>');
+                        })
+                    } else {
+                        $('#account').append('<option selected disabled>No account found.</option>');
+                    }
+                }
+            })
         });
     });
 </script>

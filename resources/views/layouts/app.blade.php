@@ -29,7 +29,7 @@
                     Organization
                 </a>
                 <a class="navbar-brand ml-2" href="{{ route('bank.index') }}">
-                    Bank
+                    Account
                 </a>
                 <a class="navbar-brand ml-2" href="{{ route('plans.index') }}">
                     Plan

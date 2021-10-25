@@ -27,6 +27,7 @@ Route::group(['middleware' => 'auth'], function() {
 
     // *** Routes for Subscription *** //
     Route::any('subscription/listing', [App\Http\Controllers\Admin\SubscriptionController::class, 'index'])->name('subscription.index');
+    Route::any('account/subscription/listing', [App\Http\Controllers\Admin\SubscriptionController::class, 'account_wise_listing'])->name('account.subscription.index');
     Route::get('create/subscription', [App\Http\Controllers\Admin\SubscriptionController::class, 'create'])->name('create.subscription');
     Route::post('store/subscription', [App\Http\Controllers\Admin\SubscriptionController::class, 'store'])->name('subscription.store');
     Route::get('subscription/setCustomerIntent', [App\Http\Controllers\Admin\SubscriptionController::class, 'setCustomerIntent']);
