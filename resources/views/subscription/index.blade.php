@@ -20,7 +20,7 @@
             </div>
             <div class="card mb-3 collapse" id="collapseExample">
                 <div class="card-body">
-                    <form method="POST" action="{{ route('subscription.index') }}">
+                    <form method="POST" action="{{ route('subscription.index', request()->segment(2) ) }}">
                         @csrf
                         <div class="row">
                             <div class="col-md-3">
@@ -57,7 +57,7 @@
                             </div>
                         </div>
                         <div class="d-flex justify-content-end">
-                            <a href="{{ route('subscription.index') }}" class="btn btn-secondary btn-sm">
+                            <a href="{{ route('subscription.index', request()->segment(2)) }}" class="btn btn-secondary btn-sm">
                                 Clear
                             </a>    
                             <button type="submit" class="btn btn-secondary btn-sm ml-2">

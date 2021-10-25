@@ -37,7 +37,7 @@
                 <a class="navbar-brand" href="{{ route('customer.index') }}">
                     Customer
                 </a>
-                <a class="navbar-brand" href="{{ route('subscription.index') }}">
+                <a class="navbar-brand" href="{{ route('account.subscription.index') }}">
                     Subscription
                 </a>
                 @endauth

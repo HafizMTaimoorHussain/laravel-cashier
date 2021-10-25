@@ -15,7 +15,7 @@
             <div class="card">
                 <div class="card-header">
                     <h5 class="text-secondary modal-title float-left">Create new subscription</h5>
-                    <a href="{{ route('subscription.index') }}" class="btn btn-secondary btn-sm float-right">Back</a>
+                    <a href="{{ route('account.subscription.index') }}" class="btn btn-secondary btn-sm float-right">Back</a>
                 </div>
                 <form action="{{ route('subscription.store') }}" method="post" id="payment-form">
                     @csrf

@@ -21,9 +21,9 @@ class SubscriptionController extends Controller
       $this->stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
     }
     
-    public function index(Request $request) 
+    public function index(Request $request, $account_id) 
     {
-        $subscriptions = Subscription::with('user','customer', 'organization', 'account')->orderBy('created_at','desc');
+        $subscriptions = Subscription::with('user','customer', 'organization', 'account')->where('account_id', $account_id)->orderBy('created_at','desc');
 
         if (!empty($request->all())) {
             if ($request->has('customer_prefix_id') && !empty(request()->customer_prefix_id)) {
@@ -110,7 +110,7 @@ class SubscriptionController extends Controller
 
           $Interval = '';
           $IntervalCount = '';
-          if(request()->recurring == "quarter") {
+          if(request()->recurring == "three_of_month") {
               $Interval = "month";
               $IntervalCount = 3;
           } else if(request()->recurring == "semiannual") {
@@ -194,7 +194,7 @@ class SubscriptionController extends Controller
         $newSubscription->account_id = request()->account;
         $newSubscription->save();
 
-        return redirect()->route('subscription.index')->with('success', 'Your subscription created successfully');
+        return redirect()->route('subscription.index', request()->account)->with('success', 'Your subscription created successfully');
 
       } catch(\Exception $e) {
         return redirect()->back()->withErrors($e->getMessage());
@@ -207,7 +207,7 @@ class SubscriptionController extends Controller
         $update_Subscription = Subscription::find(request()->hidden_subcsription_id);
         $update_Subscription->payment_status = request()->payment_status;
         $update_Subscription->save();
-        return redirect()->route('subscription.index')->with('success', 'Payment status updated successfully.');
+        return redirect()->route('account.subscription.index')->with('success', 'Payment status updated successfully.');
       } catch(\Exception $e) {
         return redirect()->back()->withErrors($e->getMessage());
       }

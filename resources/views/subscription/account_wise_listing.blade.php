@@ -10,67 +10,9 @@
                 </div>
             @endif
 
-            <div class="card">
-                <div class="card-header">
-                    <a class="text-secondary text-decoration-none">
-                        <strong>Filters</strong>
-                    </a>
-                    <span class="fa fa-plus float-right" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"></span>
-                </div>
-            </div>
-            <div class="card mb-3 collapse" id="collapseExample">
-                <div class="card-body">
-                    <form method="POST" action="{{ route('subscription.index') }}">
-                        @csrf
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="customer_prefix_id">Customer ID#</label>
-                                    <input type="text" class="form-control" name="customer_prefix_id" id="customer_prefix_id">
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="customer_name">Customer Name</label>
-                                    <input type="text" class="form-control" name="customer_name" id="customer_name">
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="service_name">Service Name</label>
-                                    <input type="text" class="form-control" name="service_name" id="service_name">
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="recurring">Recurring Name</label>
-                                    <select class="form-control" name="recurring" id="recurring">
-                                        <option selected disabled>Choose an option</option>
-                                        <option value="day">Daily</option>
-                                        <option value="week">Weekly</option>
-                                        <option value="month">Monthly</option>
-                                        <option value="three_of_month">Every 3 months</option>
-                                        <option value="semiannual">Every 6 months</option>
-                                        <option value="year">Yearly</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-end">
-                            <a href="{{ route('subscription.index') }}" class="btn btn-secondary btn-sm">
-                                Clear
-                            </a>    
-                            <button type="submit" class="btn btn-secondary btn-sm ml-2">
-                                Filter
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
             <div class="card mt-3">
                 <div class="card-header">
-                    <h5 class="text-secondary modal-title float-left">Subscription listing <span class="badge badge-secondary"> {{ $subscriptions->count() }} </span> </h5>
+                    <h5 class="text-secondary modal-title float-left">Account Wise listing <span class="badge badge-secondary"> {{ $subscriptions->count() }} </span> </h5>
                     <a href="{{ route('create.subscription') }}" class="btn btn-secondary btn-sm float-right">Add</a>
                 </div>
                 <div class="card-body">
@@ -116,7 +58,7 @@
                                         </td>
                                         <td>{{ $subscription->created_at->diffForHumans() }}</td>
                                         <td>
-                                            <a href="{{ route('subscription.index') }}" class="btn btn-warning btn-sm">
+                                            <a href="{{ route('subscription.index', $subscription->account_id) }}" class="btn btn-warning btn-sm">
                                                 <i class="fa fa-eye"></i>
                                             </a>
                                         </td>
